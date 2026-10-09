@@ -1,0 +1,134 @@
+@import "tailwindcss";
+
+@theme {
+  --color-ink: #0c0a09;
+  --color-panel: #14110f;
+  --color-raise: #1c1815;
+  --color-line: #2e2824;
+  --color-bone: #f3ece3;
+  --color-mute: #b3a89d;
+  --color-faint: #7d746b;
+  --color-violet: #d2b0ff;
+  --color-gold: #e2b56a;
+  --font-sans: "Outfit", "Avenir Next", system-ui, sans-serif;
+  --font-display: "Fraunces", "Iowan Old Style", Georgia, serif;
+  --radius-card: 1.25rem;
+}
+
+@layer base {
+  html {
+    color-scheme: dark;
+    background: var(--color-ink);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  body {
+    margin: 0;
+    min-height: 100dvh;
+    background: var(--color-ink);
+    color: var(--color-bone);
+    font-family: var(--font-sans);
+  }
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+  p {
+    text-wrap: pretty;
+  }
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-violet);
+    outline-offset: 2px;
+  }
+  input[type="range"] {
+    accent-color: var(--color-violet);
+    width: 100%;
+    height: 2rem;
+  }
+}
+
+@utility neon {
+  text-shadow: 0 0 22px color-mix(in oklab, var(--color-violet) 65%, transparent);
+}
+
+@utility tap {
+  transition: transform 150ms ease-out;
+}
+@utility tap-active {
+  &:active:not(:disabled) {
+    transform: scale(0.96);
+  }
+}
+.house-safe {
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-left: env(safe-area-inset-left, 0px);
+  padding-right: env(safe-area-inset-right, 0px);
+}
+.house-dock {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+.house-main {
+  padding-bottom: calc(7rem + env(safe-area-inset-bottom, 0px));
+}
+.house-more {
+  bottom: calc(4rem + env(safe-area-inset-bottom, 0px));
+}
+.house-sheet {
+  max-height: min(40rem, 85dvh);
+  overflow-y: auto;
+  padding-bottom: calc(1.25rem + env(safe-area-inset-bottom, 0px));
+}
+@media (min-width: 48rem) {
+  .house-main {
+    padding-bottom: 2.5rem;
+  }
+  .house-sheet {
+    padding-bottom: 1.25rem;
+  }
+}
+.grade-grain {
+  background-image: radial-gradient(circle at 20% 30%, color-mix(in oklab, var(--color-bone) 35%, transparent) 0 0.4px, transparent 0.5px);
+  background-size: 3px 3px;
+  opacity: 0.35;
+  mix-blend-mode: overlay;
+}
+.grade-scan {
+  background: repeating-linear-gradient(
+    to bottom,
+    color-mix(in oklab, var(--color-ink) 55%, transparent) 0 1px,
+    transparent 1px 3px
+  );
+  opacity: 0.45;
+}
+.grade-vignette {
+  background: radial-gradient(ellipse at center, transparent 42%, color-mix(in oklab, var(--color-ink) 72%, transparent) 100%);
+}
+.wash-film {
+  background: color-mix(in oklab, var(--color-bone) 10%, transparent);
+}
+.wash-night {
+  background: color-mix(in oklab, #35547a 36%, transparent);
+}
+.wash-neon {
+  background: color-mix(in oklab, var(--color-violet) 32%, transparent);
+}
+.wash-gold {
+  background: color-mix(in oklab, var(--color-gold) 28%, transparent);
+}
+.wash-bleach {
+  background: color-mix(in oklab, var(--color-bone) 16%, transparent);
+}
+.wash-vhs {
+  background: color-mix(in oklab, #2a6b5a 18%, transparent);
+}
+.wash-concrete {
+  background: color-mix(in oklab, #3e4638 30%, transparent);
+}
+.wash-blood {
+  background: color-mix(in oklab, #6e2430 36%, transparent);
+}
