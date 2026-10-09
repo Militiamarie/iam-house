@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { houseTake, myBooks, placeOrder } from "@/lib/house.functions";
 import { useCurrentUserState } from "@/lib/auth/use-current-user";
 import { dollars, money, OFFERS, PASS_IDS, offerFor } from "@/lib/offers";
@@ -68,16 +68,13 @@ export function PayButton({
   );
 }
 
-export function HouseBooks() {
+export function HouseBooks({ desk = false }: { desk?: boolean }) {
   const nonce = useHouse((s) => s.booksNonce);
   const mergePaid = useHouse((s) => s.mergePaid);
   const payoutUrl = useHouse((s) => s.payoutUrl);
-  const setPayout = useHouse((s) => s.setPayout);
   const paid = useHouse((s) => s.paid);
-  const [draft, setDraft] = useState(payoutUrl);
   const [take, setTake] = useState<{ cents: number; count: number; recent: { id?: string; label: string; cents: number; at: string }[] } | null>(null);
   const [booksNote, setBooksNote] = useState<string | null>(null);
-  const [linkNote, setLinkNote] = useState<string | null>(null);
   const [tries, setTries] = useState(0);
 
   useEffect(() => {
@@ -154,42 +151,17 @@ export function HouseBooks() {
         </div>
       </Card>
 
+      {desk ? null : (
       <Card>
-        <h2 className="font-display text-2xl italic">Payout link</h2>
+        <h2 className="font-display text-2xl italic">Payout</h2>
         <p className="mt-2 text-sm leading-relaxed text-mute">
-          Paste a Stripe, Cash App, PayPal, or Coinbase link. When someone pays, that link opens and the sale is still written here. Without a link, the sale is booked so you can see the take.
+          {payoutUrl ? "A payout link is set. Fans who pay still open it." : "No payout link yet. Sales still book here."} The link is cut from the house desk, not this room.
         </p>
-        <form
-          className="mt-3 flex flex-col gap-2 sm:flex-row"
-          onSubmit={(e) => {
-            e.preventDefault();
-            const raw = draft.trim();
-            if (!raw) {
-              setPayout("");
-              setLinkNote("Payout link cleared. Sales still book here.");
-              return;
-            }
-            try {
-              const url = new URL(raw);
-              if (url.protocol !== "https:" && url.protocol !== "http:") throw new Error("bad");
-              setPayout(url.toString());
-              setLinkNote("Payout link saved.");
-            } catch {
-              setLinkNote("That link needs to start with https.");
-            }
-          }}
-        >
-          <input
-            value={draft}
-            onChange={(e) => setDraft(e.target.value)}
-            placeholder="https://"
-            aria-label="Payout link"
-            className="h-11 min-w-0 flex-1 rounded-xl border border-line bg-raise px-3 text-sm"
-          />
-          <Primary type="submit">Save link</Primary>
-        </form>
-        {linkNote && <p className="mt-2 text-sm text-gold">{linkNote}</p>}
+        <Link to="/admin" className="mt-3 inline-flex h-11 items-center text-sm text-violet">
+          House desk
+        </Link>
       </Card>
+      )}
     </>
   );
 }

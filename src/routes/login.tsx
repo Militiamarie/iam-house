@@ -202,6 +202,9 @@ function Door() {
           {busy ? "Opening…" : mode === "up" ? "Create the account" : "Enter with password"}
         </button>
       </form>
+      <Link to="/admin" className="mt-4 block text-center text-xs tracking-widest text-faint uppercase">
+        House desk
+      </Link>
       {authEnabled && (
         <div className="mt-4 flex flex-col gap-2">
           {GROK_PROVIDERS.map((p) => (
