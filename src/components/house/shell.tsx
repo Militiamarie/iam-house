@@ -11,6 +11,7 @@ import {
   Mic,
   Radio,
   RadioTower,
+  Scan,
   Sparkles,
   Square,
   Swords,
@@ -30,6 +31,7 @@ import { Wire } from "@/components/house/wire";
 import { Vault } from "@/components/house/vault";
 import { LinkRoom } from "@/components/house/link-room";
 import { Academy } from "@/components/house/academy";
+import { Tour } from "@/components/house/tour";
 import { ReinaPanel } from "@/components/house/reina";
 import { InstallSheet } from "@/components/house/install";
 import { RoomGuard } from "@/lib/error-component";
@@ -46,6 +48,7 @@ const ROOMS: { id: RoomId; label: string; icon: typeof Radio; hint: string }[] =
   { id: "vault", label: "Vault", icon: Wallet, hint: "What the house made" },
   { id: "link", label: "Link", icon: Handshake, hint: "Find a collab" },
   { id: "academy", label: "Academy", icon: GraduationCap, hint: "Learn the room" },
+  { id: "tour", label: "Tour", icon: Scan, hint: "Walk it with Reina" },
 ];
 
 const MOBILE: RoomId[] = ["pulse", "studio", "forge", "link"];
@@ -215,6 +218,7 @@ export function Shell() {
             {room === "vault" && <Vault />}
             {room === "link" && <LinkRoom />}
             {room === "academy" && <Academy />}
+            {room === "tour" && <Tour />}
           </RoomGuard>
         </main>
       </div>

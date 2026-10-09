@@ -33,7 +33,8 @@ export type RoomId =
   | "wire"
   | "vault"
   | "link"
-  | "academy";
+  | "academy"
+  | "tour";
 
 export type Activity = { id: string; label: string; amount: number; at: number };
 export type Note = { id: string; name: string; text: string };

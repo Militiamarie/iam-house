@@ -108,6 +108,26 @@
 .grade-vignette {
   background: radial-gradient(ellipse at center, transparent 42%, color-mix(in oklab, var(--color-ink) 72%, transparent) 100%);
 }
+.hologram-figure {
+  filter: grayscale(0.15) sepia(1) saturate(5) hue-rotate(236deg) brightness(1.25) contrast(1.1);
+  mix-blend-mode: screen;
+  opacity: 0.95;
+}
+.hologram-scan {
+  background: linear-gradient(to bottom, transparent, color-mix(in oklab, var(--color-violet) 70%, transparent), transparent);
+  animation: holo-scan 2.8s linear infinite;
+}
+.hologram-plate {
+  transition: transform 0.7s ease;
+}
+@keyframes holo-scan {
+  from { transform: translateY(-110%); }
+  to { transform: translateY(110%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hologram-scan { animation: none; opacity: 0.4; transform: none; }
+  .hologram-plate { transition: none; }
+}
 .wash-film {
   background: color-mix(in oklab, var(--color-bone) 10%, transparent);
 }

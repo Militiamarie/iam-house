@@ -78,6 +78,9 @@ export function Pulse() {
             <p className="mt-2 max-w-sm text-sm leading-relaxed text-bone">
               One house. The board, the booth, the lesson, the drop, and the people you make it with.
             </p>
+            <button type="button" onClick={() => useHouse.getState().setRoom("tour")} className="mt-3 h-11 rounded-full border border-violet/70 px-4 text-sm text-violet">
+              Walk with Reina
+            </button>
           </div>
         </div>
       </section>
