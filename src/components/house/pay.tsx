@@ -76,16 +76,20 @@ export function HouseBooks() {
   const paid = useHouse((s) => s.paid);
   const [draft, setDraft] = useState(payoutUrl);
   const [take, setTake] = useState<{ cents: number; count: number; recent: { id?: string; label: string; cents: number; at: string }[] } | null>(null);
-  const [note, setNote] = useState<string | null>(null);
+  const [booksNote, setBooksNote] = useState<string | null>(null);
+  const [linkNote, setLinkNote] = useState<string | null>(null);
+  const [tries, setTries] = useState(0);
 
   useEffect(() => {
     let live = true;
     void houseTake()
       .then((row) => {
-        if (live) setTake(row);
+        if (!live) return;
+        setTake(row);
+        setBooksNote(null);
       })
       .catch(() => {
-        if (live) setNote("The books didn’t open.");
+        if (live) setBooksNote("The books didn’t open. Try them again — the sales are still there.");
       });
     void myBooks()
       .then((rows) => {
@@ -97,7 +101,7 @@ export function HouseBooks() {
     return () => {
       live = false;
     };
-  }, [nonce, mergePaid]);
+  }, [nonce, mergePaid, tries]);
 
   return (
     <>
@@ -107,7 +111,14 @@ export function HouseBooks() {
         <p className="mt-2 max-w-xl text-sm leading-relaxed text-mute">
           Tips, passes, locked tapes, leases, and prints. You keep all of it. {take ? `${take.count} checkout${take.count === 1 ? "" : "s"} in the books.` : "Counting."}
         </p>
-        {note && <p className="mt-2 text-sm text-gold">{note}</p>}
+        {booksNote && (
+          <div className="mt-3 flex flex-wrap items-center gap-3">
+            <p className="text-sm text-gold">{booksNote}</p>
+            <button type="button" onClick={() => setTries((n) => n + 1)} className="h-11 rounded-full border border-line px-4 text-sm">
+              Try the books again
+            </button>
+          </div>
+        )}
         {take && take.recent.length > 0 && (
           <ul className="mt-4 flex flex-col">
             {take.recent.map((row, i) => (
@@ -155,16 +166,16 @@ export function HouseBooks() {
             const raw = draft.trim();
             if (!raw) {
               setPayout("");
-              setNote("Payout link cleared. Sales still book here.");
+              setLinkNote("Payout link cleared. Sales still book here.");
               return;
             }
             try {
               const url = new URL(raw);
               if (url.protocol !== "https:" && url.protocol !== "http:") throw new Error("bad");
               setPayout(url.toString());
-              setNote("Payout link saved.");
+              setLinkNote("Payout link saved.");
             } catch {
-              setNote("That link needs to start with https.");
+              setLinkNote("That link needs to start with https.");
             }
           }}
         >
@@ -177,6 +188,7 @@ export function HouseBooks() {
           />
           <Primary type="submit">Save link</Primary>
         </form>
+        {linkNote && <p className="mt-2 text-sm text-gold">{linkNote}</p>}
       </Card>
     </>
   );

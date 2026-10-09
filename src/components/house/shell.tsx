@@ -32,6 +32,7 @@ import { LinkRoom } from "@/components/house/link-room";
 import { Academy } from "@/components/house/academy";
 import { ReinaPanel } from "@/components/house/reina";
 import { InstallSheet } from "@/components/house/install";
+import { RoomGuard } from "@/lib/error-component";
 
 const ROOMS: { id: RoomId; label: string; icon: typeof Radio; hint: string }[] = [
   { id: "pulse", label: "Pulse", icon: Radio, hint: "Feed, stories, tapes" },
@@ -202,17 +203,19 @@ export function Shell() {
         </header>
 
         <main className="house-main min-h-0 flex-1 overflow-y-auto px-4 pt-5 md:px-8">
-          {room === "pulse" && <Pulse />}
-          {room === "studio" && <Studio />}
-          {room === "booth" && <Booth />}
-          {room === "forge" && <Forge />}
-          {room === "cipher" && <Cipher />}
-          {room === "market" && <Market />}
-          {room === "gallery" && <Gallery />}
-          {room === "wire" && <Wire />}
-          {room === "vault" && <Vault />}
-          {room === "link" && <LinkRoom />}
-          {room === "academy" && <Academy />}
+          <RoomGuard key={room} name={ROOMS.find((item) => item.id === room)?.label ?? "House"}>
+            {room === "pulse" && <Pulse />}
+            {room === "studio" && <Studio />}
+            {room === "booth" && <Booth />}
+            {room === "forge" && <Forge />}
+            {room === "cipher" && <Cipher />}
+            {room === "market" && <Market />}
+            {room === "gallery" && <Gallery />}
+            {room === "wire" && <Wire />}
+            {room === "vault" && <Vault />}
+            {room === "link" && <LinkRoom />}
+            {room === "academy" && <Academy />}
+          </RoomGuard>
         </main>
       </div>
 

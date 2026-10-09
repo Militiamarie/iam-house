@@ -3,6 +3,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { Eye, EyeOff } from "lucide-react";
 import { GROK_PROVIDERS, authClient, authEnabled, signIn } from "@/lib/auth/client";
 import { useCurrentUserState } from "@/lib/auth/use-current-user";
+import { sayError } from "@/lib/say";
 
 export const Route = createFileRoute("/login")({ component: Login });
 
@@ -78,7 +79,9 @@ function Door() {
 
   async function finish(result: EmailResult) {
     if (result.error) {
-      setError(result.error.message ?? "That didn’t open the door.");
+      const said = sayError(result.error.message ?? result.error);
+      if (said.flip) setMode(said.flip);
+      setError(said.fix);
       setBusy(false);
       return;
     }
@@ -119,7 +122,9 @@ function Door() {
         await finish(await client.signIn.email({ email: email.trim(), password }));
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "The door stuck.");
+      const said = sayError(err);
+      if (said.flip) setMode(said.flip);
+      setError(said.fix);
       setBusy(false);
     }
   }

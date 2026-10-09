@@ -143,7 +143,7 @@ export function Wire() {
       downloadBlob(blob, `${release.catalog}.wav`);
       setNote(`Master saved · ${release.catalog}.wav`);
     } catch {
-      setNote("That master wouldn’t render.");
+      setNote("That master wouldn’t render. Play the board once in the studio, then cut it again.");
     }
     setBusy(null);
   }

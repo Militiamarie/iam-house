@@ -42,7 +42,7 @@ export function Gallery() {
                       onClick={() => {
                         const result = spend(item.id);
                         setNote(
-                          result === "ok" ? `${item.name} is in your papers.` : result === "broke" ? "The vault is short." : "Already yours.",
+                          result === "ok" ? `${item.name} is in your papers.` : result === "broke" ? `Short ${item.price} IAM. The academy and the cipher both pay.` : "Already yours.",
                         );
                       }}
                     >

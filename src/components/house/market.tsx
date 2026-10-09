@@ -60,7 +60,7 @@ export function Market() {
                       result === "ok"
                         ? `${beat.name} is in your papers.`
                         : result === "broke"
-                          ? "Not enough IAM for that license."
+                          ? `Short ${beat.price} IAM. Clear a lesson or take the cipher, then license it.`
                           : "Already licensed.",
                     );
                   }}

@@ -421,7 +421,7 @@ export class HouseEngine {
 
   async armMic(): Promise<string | null> {
     if (typeof navigator === "undefined" || !navigator.mediaDevices?.getUserMedia) {
-      return "This browser won't open the booth mic.";
+      return "This browser won’t open a mic. Hear the scale instead, or open the house in Chrome or Safari.";
     }
     try {
       const ctx = await this.resume();
@@ -439,7 +439,7 @@ export class HouseEngine {
       }
       return null;
     } catch {
-      return "Mic stayed shut. You can still audition the rack.";
+      return "Mic stayed shut. Allow the microphone when the browser asks, then open it again. The rack still plays without it.";
     }
   }
 

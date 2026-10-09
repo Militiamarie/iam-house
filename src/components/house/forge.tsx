@@ -2,6 +2,7 @@ import { useState } from "react";
 import { houseSketch, type Draft } from "@/lib/catalog";
 import { KEYS, type HouseKey } from "@/lib/patterns";
 import { askReina } from "@/lib/reina.functions";
+import { sayError } from "@/lib/say";
 import { publishLive, useHouse } from "@/lib/store";
 import { getEngine } from "@/lib/engine";
 import { Card, Ghost, Kicker, Primary } from "@/components/house/bits";
@@ -44,6 +45,14 @@ function asDraft(text: string, fallback: Draft): Draft {
   }
 }
 
+async function ask(mode: "forge" | "section", text: string, context: string) {
+  try {
+    return await askReina({ data: { mode, text, context } });
+  } catch (err) {
+    return { ok: false as const, error: sayError(err).fix };
+  }
+}
+
 export function Forge() {
   const draft = useHouse((s) => s.draft);
   const locks = useHouse((s) => s.locks);
@@ -60,9 +69,7 @@ export function Forge() {
     const sketch = houseSketch(idea, pocket, mood);
     setBusy(true);
     setStatus(null);
-    const res = await askReina({
-      data: { mode: "forge", text: idea, context: `mood ${mood}, pocket ${pocket}` },
-    });
+    const res = await ask("forge", idea, `mood ${mood}, pocket ${pocket}`);
     const next = res.ok ? asDraft(res.text, sketch) : { ...sketch, note: `${sketch.note} ${res.error}` };
     setDraft(next);
     setBusy(false);
@@ -74,13 +81,11 @@ export function Forge() {
     const section = draft.sections[index];
     if (!section) return;
     setBusy(true);
-    const res = await askReina({
-      data: {
-        mode: "section",
-        text: section.lines.join(" / "),
-        context: `${draft.title}. Section ${section.name}. Mood ${mood}.`,
-      },
-    });
+    const res = await ask(
+      "section",
+      section.lines.join(" / "),
+      `${draft.title}. Section ${section.name}. Mood ${mood}.`,
+    );
     let lines = section.lines;
     if (res.ok) {
       try {
