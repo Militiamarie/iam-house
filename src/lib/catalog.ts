@@ -396,18 +396,43 @@ export const RANKS: RankSeed[] = [
   { id: "low", name: "Low Choir", city: "Inglewood", score: 120 },
 ];
 
-export const BATTLE = {
-  left: {
-    name: "Saint Ocho",
-    pattern: "afters",
-    lines: ["Knock when the lights go cheap,", "I still count the pocket in my sleep."],
-  },
-  right: {
-    name: "Lumen Paz",
-    pattern: "candle",
-    lines: ["Leave the snare where the truth can land,", "I don’t decorate a shaking hand."],
-  },
+export type Bout = {
+  id: string;
+  left: { id: string; name: string; pattern: string; lines: string[] };
+  right: { id: string; name: string; pattern: string; lines: string[] };
 };
+
+export const BOUTS: Bout[] = [
+  {
+    id: "cheap-light",
+    left: { id: "ocho", name: "Saint Ocho", pattern: "afters", lines: ["Knock when the lights go cheap,", "I still count the pocket in my sleep."] },
+    right: { id: "lumen", name: "Lumen Paz", pattern: "candle", lines: ["Leave the snare where the truth can land,", "I don’t decorate a shaking hand."] },
+  },
+  {
+    id: "name-up",
+    left: { id: "nova", name: "Nova Reed", pattern: "hymn", lines: ["Air in the hook, I don’t fill the room,", "The last bar can carry the whole tune."] },
+    right: { id: "melitia", name: "Melitia Marie", pattern: "concrete", lines: ["Name on the wall, and the wall stays up,", "I don’t borrow a voice to fill a cup."] },
+  },
+  {
+    id: "choir-cut",
+    left: { id: "low", name: "Low Choir", pattern: "hymn", lines: ["Hold it. The pretty note can wait.", "Silence is a hit if you don’t decorate."] },
+    right: { id: "ocho", name: "Saint Ocho", pattern: "afters", lines: ["Behind the kick, not on the one,", "If you rush it, the pocket’s already done."] },
+  },
+  {
+    id: "alley-four",
+    left: { id: "lumen", name: "Lumen Paz", pattern: "candle", lines: ["One candle, then the alley knows,", "I don’t spell the feeling out in rows."] },
+    right: { id: "nova", name: "Nova Reed", pattern: "concrete", lines: ["Four on the floor, but leave a door,", "The chorus needs a place to want some more."] },
+  },
+];
+
+export type Call = { id: string; from: string; pattern: string; line: string; land: string };
+
+export const CALLS: Call[] = [
+  { id: "quiet", from: "Nova Reed", pattern: "hymn", line: "If the room goes quiet, I still", land: "name" },
+  { id: "late", from: "Saint Ocho", pattern: "afters", line: "The knock is late so the verse can", land: "wait" },
+  { id: "candle", from: "Low Choir", pattern: "candle", line: "Hold the note until the candle", land: "stays" },
+  { id: "alley", from: "Lumen Paz", pattern: "concrete", line: "Four on the floor, but the alley", land: "knows" },
+];
 
 export const PRICE: Record<string, { name: string; price: number }> = Object.fromEntries(
   [...BEATS, ...EDITIONS].map((item) => [item.id, { name: item.name, price: item.price }]),

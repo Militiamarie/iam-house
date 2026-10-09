@@ -39,7 +39,7 @@ const ROOMS: { id: RoomId; label: string; icon: typeof Radio; hint: string }[] =
   { id: "studio", label: "Studio", icon: AudioLines, hint: "Board, rack, song" },
   { id: "booth", label: "Booth", icon: Mic, hint: "Voice through the rack" },
   { id: "forge", label: "Forge", icon: Sparkles, hint: "Write it in sections" },
-  { id: "cipher", label: "Cipher", icon: Swords, hint: "Bars and the board" },
+  { id: "cipher", label: "Cipher", icon: Swords, hint: "Floor, clock, echo" },
   { id: "market", label: "Market", icon: Disc3, hint: "License a pocket" },
   { id: "gallery", label: "Gallery", icon: ImageIcon, hint: "House prints" },
   { id: "wire", label: "Wire", icon: RadioTower, hint: "Press it out" },

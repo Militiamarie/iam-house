@@ -56,7 +56,8 @@ type Data = {
   matches: string[];
   passed: string[];
   scores: Record<string, number>;
-  battleVote: "left" | "right" | null;
+  votes: Record<string, "left" | "right">;
+  cashed: Record<string, boolean>;
   cleared: Record<string, boolean>;
   rewarded: Record<string, boolean>;
   draft: Draft | null;
@@ -110,7 +111,8 @@ type Actions = {
   spend: (id: string) => "ok" | "owned" | "broke" | "missing";
   swipe: (id: string, yes: boolean) => void;
   resetDeck: () => void;
-  vote: (side: "left" | "right") => void;
+  vote: (boutId: string, side: "left" | "right", winnerId: string) => void;
+  award: (id: string, label: string, amount: number) => "ok" | "paid";
   addScore: (id: string, amount: number) => void;
   clearLesson: (id: string) => void;
   setDraft: (draft: Draft | null) => void;
@@ -163,7 +165,8 @@ const initial: Data = {
   matches: [],
   passed: [],
   scores: Object.fromEntries(RANKS.map((r) => [r.id, r.score])),
-  battleVote: null,
+  votes: {},
+  cashed: {},
   cleared: {},
   rewarded: {},
   draft: null,
@@ -362,13 +365,37 @@ export const useHouse = create<House>()(
         else set({ passed: [...get().passed, id] });
       },
       resetDeck: () => set({ passed: [], matches: [] }),
-      vote: (side) => {
-        if (get().battleVote) return;
-        const id = side === "left" ? "ocho" : "lumen";
+      vote: (boutId, side, winnerId) => {
+        const votes = get().votes ?? {};
+        if (votes[boutId]) return;
+        const grant = 6;
         set({
-          battleVote: side,
-          scores: { ...get().scores, [id]: (get().scores[id] ?? 0) + 8 },
+          votes: { ...votes, [boutId]: side },
+          scores: {
+            ...get().scores,
+            [winnerId]: (get().scores[winnerId] ?? 0) + 8,
+            you: (get().scores.you ?? 0) + 4,
+          },
+          credits: get().credits + grant,
+          activity: [
+            { id: crypto.randomUUID(), label: "Floor vote", amount: grant, at: Date.now() },
+            ...get().activity,
+          ].slice(0, 20),
         });
+      },
+      award: (id, label, amount) => {
+        const cashed = get().cashed ?? {};
+        if (cashed[id] || amount <= 0) return "paid";
+        set({
+          cashed: { ...cashed, [id]: true },
+          credits: get().credits + amount,
+          scores: { ...get().scores, you: (get().scores.you ?? 0) + 4 },
+          activity: [
+            { id: crypto.randomUUID(), label, amount, at: Date.now() },
+            ...get().activity,
+          ].slice(0, 20),
+        });
+        return "ok";
       },
       addScore: (id, amount) => set({ scores: { ...get().scores, [id]: (get().scores[id] ?? 0) + amount } }),
       clearLesson: (id) => {
@@ -514,6 +541,7 @@ export const useHouse = create<House>()(
           swipe: _y,
           resetDeck: _z,
           vote: _aa,
+          award: _award,
           addScore: _ab,
           clearLesson: _ac,
           setDraft: _ad,
