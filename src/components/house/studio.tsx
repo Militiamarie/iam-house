@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
-import { DRUMS, KEYS, PRESET_LIST, STEPS, VOICES, VOICE_LABEL, degreeName, type DrumKey, type Voice } from "@/lib/patterns";
+import { useState } from "react";
+import { CHAINS, DRUMS, KEYS, PRESET_LIST, STEPS, VOICES, VOICE_LABEL, degreeName, type DrumKey, type Voice } from "@/lib/patterns";
 import { useHouse } from "@/lib/store";
 import { Card, Kicker } from "@/components/house/bits";
 
@@ -27,6 +28,7 @@ export function Studio() {
   const setGain = useHouse((s) => s.setGain);
   const toggleMute = useHouse((s) => s.toggleMute);
   const patchRack = useHouse((s) => s.patchRack);
+  const [chain, setChain] = useState<string | null>(null);
 
   const pat = patterns[patternId] ?? PRESET_LIST[0]!;
 
@@ -36,7 +38,7 @@ export function Studio() {
         <Kicker>Studio</Kicker>
         <h1 className="mt-2 font-display text-4xl italic">The board</h1>
         <p className="mt-2 text-sm leading-relaxed text-mute">
-          Step drums, a minor roll, a song of eight bars, and a rack that actually colors the sound. Press play in the bar above.
+          The kick has a click, the 808 has weight, the hook is a filtered saw, and the rim is wood. Chains on the rack are starting points. Press play in the bar above.
         </p>
         <button
           type="button"
@@ -149,20 +151,40 @@ export function Studio() {
           </Card>
           <Card>
             <h2 className="mb-3 font-display text-2xl italic">Rack</h2>
-            <RackSlider label="Low shelf" min={-12} max={12} value={rack.low} onChange={(low) => patchRack({ low })} />
-            <RackSlider label="Mid" min={-12} max={12} value={rack.mid} onChange={(mid) => patchRack({ mid })} />
-            <RackSlider label="High shelf" min={-12} max={12} value={rack.high} onChange={(high) => patchRack({ high })} />
-            <RackSlider label="Press" min={0} max={100} value={Math.round(rack.press * 100)} onChange={(n) => patchRack({ press: n / 100 })} />
-            <RackSlider label="Echo" min={0} max={100} value={Math.round(rack.echo * 100)} onChange={(n) => patchRack({ echo: n / 100 })} />
-            <RackSlider label="Room" min={0} max={100} value={Math.round(rack.room * 100)} onChange={(n) => patchRack({ room: n / 100 })} />
-            <RackSlider label="Grit" min={0} max={100} value={Math.round(rack.grit * 100)} onChange={(n) => patchRack({ grit: n / 100 })} />
+            <div className="flex flex-wrap gap-2">
+              {CHAINS.filter((item) => !item.rack.relay).map((item) => (
+                <button
+                  key={item.id}
+                  type="button"
+                  onClick={() => {
+                    setChain(item.id);
+                    patchRack(item.rack);
+                  }}
+                  className={`h-9 rounded-full px-3 text-sm ${chain === item.id ? "bg-violet text-ink" : "border border-line text-mute"}`}
+                >
+                  {item.name}
+                </button>
+              ))}
+            </div>
+            <p className="mt-2 text-xs leading-relaxed text-faint">
+              {CHAINS.find((item) => item.id === chain)?.note ?? "The sliders left the chain. This mix is yours."}
+            </p>
+            <div className="mt-4">
+            <RackSlider label="Low shelf" min={-12} max={12} value={rack.low} onChange={(low) => { setChain(null); patchRack({ low }); }} />
+            <RackSlider label="Mid" min={-12} max={12} value={rack.mid} onChange={(mid) => { setChain(null); patchRack({ mid }); }} />
+            <RackSlider label="High shelf" min={-12} max={12} value={rack.high} onChange={(high) => { setChain(null); patchRack({ high }); }} />
+            <RackSlider label="Press" min={0} max={100} value={Math.round(rack.press * 100)} onChange={(n) => { setChain(null); patchRack({ press: n / 100 }); }} />
+            <RackSlider label="Echo" min={0} max={100} value={Math.round(rack.echo * 100)} onChange={(n) => { setChain(null); patchRack({ echo: n / 100 }); }} />
+            <RackSlider label="Room" min={0} max={100} value={Math.round(rack.room * 100)} onChange={(n) => { setChain(null); patchRack({ room: n / 100 }); }} />
+            <RackSlider label="Grit" min={0} max={100} value={Math.round(rack.grit * 100)} onChange={(n) => { setChain(null); patchRack({ grit: n / 100 }); }} />
             <RackSlider
               label="Echo time"
-              min={4}
+              min={5}
               max={70}
               value={Math.round(rack.delayTime * 100)}
-              onChange={(n) => patchRack({ delayTime: n / 100 })}
+              onChange={(n) => { setChain(null); patchRack({ delayTime: n / 100 }); }}
             />
+            </div>
           </Card>
           <Card>
             <h2 className="mb-3 font-display text-2xl italic">Mixer</h2>

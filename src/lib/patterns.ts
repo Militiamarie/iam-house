@@ -35,16 +35,29 @@ export type Pattern = {
 };
 
 export const DEFAULT_RACK: Rack = {
-  low: 1.5,
-  mid: 0,
-  high: 0.8,
-  press: 0.35,
-  echo: 0.14,
-  room: 0.2,
-  grit: 0.06,
+  low: 2,
+  mid: -1,
+  high: 1.4,
+  press: 0.4,
+  echo: 0.12,
+  room: 0.18,
+  grit: 0.08,
   relay: false,
-  delayTime: 0.32,
+  delayTime: 0.28,
 };
+
+export const CHAINS: { id: string; name: string; note: string; rack: Rack }[] = [
+  { id: "house", name: "House", note: "The room as it was tuned. Low present, hook in front.", rack: { ...DEFAULT_RACK } },
+  { id: "velvet", name: "Velvet", note: "Warm shelf, a small room, almost no grit.", rack: { low: 3.5, mid: -1.5, high: 0.4, press: 0.32, echo: 0.08, room: 0.24, grit: 0.04, delayTime: 0.22, relay: false } },
+  { id: "club", name: "Club", note: "Kick and 808 forward. Short room. The press holds the peak.", rack: { low: 4, mid: -2, high: 1, press: 0.62, echo: 0.06, room: 0.1, grit: 0.12, delayTime: 0.18, relay: false } },
+  { id: "plate", name: "Plate", note: "Bright tail. The snare and the hook sit in it.", rack: { low: 1, mid: 0.5, high: 3, press: 0.36, echo: 0.16, room: 0.42, grit: 0.05, delayTime: 0.2, relay: false } },
+  { id: "tape", name: "Tape", note: "Rolled top, a little dirt, like the machine was warm.", rack: { low: 2.5, mid: 1, high: -2.5, press: 0.48, echo: 0.1, room: 0.14, grit: 0.28, delayTime: 0.26, relay: false } },
+  { id: "tunnel", name: "Tunnel", note: "A long echo that stays dark so the words can return.", rack: { low: 1, mid: -0.5, high: -1, press: 0.4, echo: 0.58, room: 0.34, grit: 0.06, delayTime: 0.48, relay: false } },
+  { id: "radio", name: "Radio", note: "Narrow band. A handset in the alley.", rack: { low: -10, mid: 6, high: -8, press: 0.55, echo: 0.04, room: 0.04, grit: 0.22, delayTime: 0.12, relay: false } },
+  { id: "choir", name: "Choir", note: "Air on the top, a short plate, no shout.", rack: { low: 0, mid: 0.5, high: 3.5, press: 0.24, echo: 0.22, room: 0.46, grit: 0, delayTime: 0.1, relay: false } },
+  { id: "dry", name: "Dry", note: "No room. Hear the kit before you color it.", rack: { low: 1, mid: 0, high: 0.6, press: 0.2, echo: 0, room: 0, grit: 0.02, delayTime: 0.2, relay: false } },
+  { id: "relay", name: "Relay", note: "Snaps a sung note to the house scale.", rack: { low: 2, mid: 1.5, high: 0.5, press: 0.45, echo: 0.16, room: 0.14, grit: 0.1, delayTime: 0.22, relay: true } },
+];
 
 export const DEFAULT_GAINS: Record<Voice, number> = {
   kick: 0.86,
@@ -178,7 +191,7 @@ export const VOICE_LABEL: Record<Voice, string> = {
   kick: "Kick",
   snare: "Snare",
   hat: "Hat",
-  perc: "Perc",
+  perc: "Rim",
   bass: "808",
   lead: "Lead",
 };

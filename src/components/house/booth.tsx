@@ -1,15 +1,8 @@
 import { useEffect, useState } from "react";
+import { CHAINS } from "@/lib/patterns";
 import { getEngine } from "@/lib/engine";
 import { useHouse } from "@/lib/store";
 import { Card, Ghost, Kicker, Primary } from "@/components/house/bits";
-
-const PRESETS = [
-  { id: "velvet", name: "Velvet", note: "Warm low, a little room.", rack: { low: 3, mid: -1, high: 1, press: 0.3, echo: 0.08, room: 0.22, grit: 0.04, delayTime: 0.22, relay: false } },
-  { id: "tunnel", name: "Tunnel", note: "Long echo. Let the word come back.", rack: { low: 1, mid: 0, high: -1, press: 0.4, echo: 0.55, room: 0.4, grit: 0.05, delayTime: 0.46, relay: false } },
-  { id: "radio", name: "Radio", note: "Narrow. Like a handset in the alley.", rack: { low: -10, mid: 6, high: -8, press: 0.55, echo: 0.05, room: 0.05, grit: 0.2, delayTime: 0.12, relay: false } },
-  { id: "choir", name: "Choir", note: "Short echo, more air, no shout.", rack: { low: 0, mid: 1, high: 3, press: 0.25, echo: 0.28, room: 0.48, grit: 0, delayTime: 0.08, relay: false } },
-  { id: "relay", name: "Relay", note: "Snaps your pitch to the house scale.", rack: { low: 2, mid: 2, high: 0, press: 0.45, echo: 0.16, room: 0.12, grit: 0.12, delayTime: 0.2, relay: true } },
-] as const;
 
 export function Booth() {
   const patchRack = useHouse((s) => s.patchRack);
@@ -45,7 +38,7 @@ export function Booth() {
       </header>
 
       <div className="grid gap-3 sm:grid-cols-2">
-        {PRESETS.map((item) => (
+        {CHAINS.map((item) => (
           <button
             key={item.id}
             type="button"
