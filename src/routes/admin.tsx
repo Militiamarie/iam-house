@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Eye, EyeOff } from "lucide-react";
 import { authClient, authEnabled, signOut } from "@/lib/auth/client";
-import { useCurrentUserState } from "@/lib/auth/use-current-user";
 import { deskGate, mayCutKey } from "@/lib/admin.functions";
 import { sayError } from "@/lib/say";
 import { useHouse } from "@/lib/store";
@@ -27,37 +26,41 @@ function rememberToken(token: string | null | undefined) {
 }
 
 function AdminDoor() {
-  const { user, isPending } = useCurrentUserState();
-  const [admin, setAdmin] = useState(false);
-  const [checked, setChecked] = useState(!authEnabled);
+  const [gate, setGate] = useState<"load" | "out" | "guest" | "house">(authEnabled ? "load" : "house");
 
   useEffect(() => {
     if (!authEnabled) return;
-    if (isPending) return;
-    if (!user) {
-      setAdmin(false);
-      setChecked(true);
-      return;
-    }
     let live = true;
-    setChecked(false);
-    void deskGate()
-      .then((row) => {
+    const headers = new Headers();
+    try {
+      const token = window.sessionStorage.getItem("grok-auth.bearer-token");
+      if (token) headers.set("Authorization", `Bearer ${token}`);
+    } catch {
+      /* cookie path */
+    }
+    void fetch("/api/auth/get-session", { headers, credentials: "include" })
+      .then(async (res) => {
+        if (!res.ok) return null;
+        const body = (await res.json()) as { user?: { email?: string | null } | null };
+        return body.user?.email ?? null;
+      })
+      .then(async (email) => {
         if (!live) return;
-        setAdmin(row.admin);
-        setChecked(true);
+        if (!email) {
+          setGate("out");
+          return;
+        }
+        const row = await deskGate();
+        if (!live) return;
+        setGate(row.admin ? "house" : "guest");
       })
       .catch(() => {
-        if (!live) return;
-        setAdmin(false);
-        setChecked(true);
+        if (live) setGate("out");
       });
     return () => {
       live = false;
     };
-  }, [user, isPending]);
-
-  const open = !authEnabled || (checked && admin);
+  }, []);
 
   return (
     <main className="min-h-dvh bg-ink px-4 py-10 text-bone">
@@ -67,11 +70,11 @@ function AdminDoor() {
         </Link>
         <p className="mt-2 text-sm text-mute">House desk. Not the guest door.</p>
         <div className="mt-6">
-          {isPending || (authEnabled && user && !checked) ? (
+          {gate === "load" ? (
             <div className="h-48 animate-pulse rounded-2xl bg-raise" />
-          ) : open ? (
+          ) : gate === "house" ? (
             <Desk preview={!authEnabled} />
-          ) : user ? (
+          ) : gate === "guest" ? (
             <GuestSession />
           ) : (
             <DeskForm />
@@ -110,12 +113,7 @@ function DeskForm() {
       return;
     }
     rememberToken(result.data?.token);
-    try {
-      await authClient.getSession();
-    } catch {
-      /* the gate asks again */
-    }
-    setBusy(false);
+    window.location.assign("/admin");
   }
 
   async function submit(e: React.FormEvent) {
@@ -258,6 +256,7 @@ function Desk({ preview }: { preview: boolean }) {
           Sign-in is off in this preview, so the desk is open on this device. When the door is on, only the house key gets in.
         </p>
       )}
+      <Skins worn={worn} />
       <section className="rounded-2xl border border-line bg-panel p-4">
         <h2 className="font-display text-2xl italic">Payout link</h2>
         <p className="mt-2 text-sm leading-relaxed text-mute">
@@ -296,7 +295,6 @@ function Desk({ preview }: { preview: boolean }) {
         </form>
         {note && <p className="mt-2 text-sm text-gold">{note}</p>}
       </section>
-      <Skins worn={worn} />
       <HouseBooks desk />
     </div>
   );
