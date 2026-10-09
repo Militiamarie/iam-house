@@ -7,6 +7,8 @@ import { deskGate, mayCutKey } from "@/lib/admin.functions";
 import { sayError } from "@/lib/say";
 import { useHouse } from "@/lib/store";
 import { HouseBooks } from "@/components/house/pay";
+import { Skins } from "@/components/house/skins";
+import { getSkin, type SkinId } from "@/lib/skin.functions";
 
 export const Route = createFileRoute("/admin")({ component: AdminDoor });
 
@@ -227,6 +229,19 @@ function Desk({ preview }: { preview: boolean }) {
   const setPayout = useHouse((s) => s.setPayout);
   const [draft, setDraft] = useState(payoutUrl);
   const [note, setNote] = useState<string | null>(null);
+  const [worn, setWorn] = useState<SkinId>("house");
+
+  useEffect(() => {
+    let live = true;
+    void getSkin()
+      .then((skin) => {
+        if (live) setWorn(skin);
+      })
+      .catch(() => undefined);
+    return () => {
+      live = false;
+    };
+  }, []);
 
   return (
     <div className="flex flex-col gap-4">
@@ -281,6 +296,7 @@ function Desk({ preview }: { preview: boolean }) {
         </form>
         {note && <p className="mt-2 text-sm text-gold">{note}</p>}
       </section>
+      <Skins worn={worn} />
       <HouseBooks desk />
     </div>
   );
