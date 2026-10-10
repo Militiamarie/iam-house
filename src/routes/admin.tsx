@@ -106,18 +106,7 @@ function DeskForm() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  async function finish(result: EmailResult) {
-    if (result.error) {
-      setError(sayError(result.error.message ?? result.error).fix);
-      setBusy(false);
-      return;
-    }
-    rememberToken(result.data?.token);
-    window.location.assign("/admin");
-  }
-
-  async function submit(e: React.FormEvent) {
-    e.preventDefault();
+  async function openDesk() {
     if (!authEnabled) {
       setError("Sign-in is off.");
       return;
@@ -128,41 +117,32 @@ function DeskForm() {
     }
     setBusy(true);
     setError(null);
-    const gate = await mayCutKey({ data: { email } });
-    if (!gate.allowed) {
-      setError("This door is not for guests. Use the other door.");
-      setBusy(false);
-      return;
-    }
-    const client = authClient as typeof authClient & {
-      signIn: { email: (body: { email: string; password: string }) => Promise<EmailResult> };
-    };
     try {
-      await finish(await client.signIn.email({ email: email.trim(), password }));
-    } catch (err) {
-      setError(sayError(err).fix);
+      const gate = await mayCutKey({ data: { email } });
+      if (!gate.allowed) {
+        setError("This door is not for guests. Use the other door.");
+        setBusy(false);
+        return;
+      }
+      const client = authClient as typeof authClient & {
+        signIn: { email: (body: { email: string; password: string }) => Promise<EmailResult> };
+        signUp: { email: (body: { email: string; password: string; name: string }) => Promise<EmailResult> };
+      };
+      const signed = await client.signIn.email({ email: email.trim(), password });
+      if (!signed.error) {
+        rememberToken(signed.data?.token);
+        window.location.assign("/admin");
+        return;
+      }
+      const made = await client.signUp.email({ email: email.trim(), password, name: "House" });
+      if (!made.error) {
+        rememberToken(made.data?.token);
+        window.location.assign("/admin");
+        return;
+      }
+      const said = sayError(made.error.message ?? made.error);
+      setError(said.flip ? "That key doesn’t fit. Use the password you already cut for this desk." : said.fix);
       setBusy(false);
-    }
-  }
-
-  async function cutKey() {
-    if (password.length < 8) {
-      setError("Use at least 8 characters.");
-      return;
-    }
-    setBusy(true);
-    setError(null);
-    const gate = await mayCutKey({ data: { email } });
-    if (!gate.allowed) {
-      setError("This door is not for guests. Use the other door.");
-      setBusy(false);
-      return;
-    }
-    const client = authClient as typeof authClient & {
-      signUp: { email: (body: { email: string; password: string; name: string }) => Promise<EmailResult> };
-    };
-    try {
-      await finish(await client.signUp.email({ email: email.trim(), password, name: "House" }));
     } catch (err) {
       setError(sayError(err).fix);
       setBusy(false);
@@ -172,8 +152,16 @@ function DeskForm() {
   return (
     <section className="max-w-sm rounded-2xl border border-line bg-panel p-5">
       <h1 className="font-display text-3xl italic">House key</h1>
-      <p className="mt-2 text-sm leading-relaxed text-mute">Email and password for the desk. Guests are turned away before the lock turns.</p>
-      <form onSubmit={(e) => void submit(e)} className="mt-4 flex flex-col gap-3">
+      <p className="mt-2 text-sm leading-relaxed text-mute">
+        Your email and a password. The first time, opening the desk cuts the key. After that, the same password opens it.
+      </p>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          void openDesk();
+        }}
+        className="mt-4 flex flex-col gap-3"
+      >
         <label className="block text-sm">
           <span className="mb-1 block text-xs tracking-widest text-faint uppercase">Email</span>
           <input
@@ -209,13 +197,10 @@ function DeskForm() {
         </label>
         {error && <p className="text-sm text-gold">{error}</p>}
         <button type="submit" disabled={busy} className="h-11 rounded-full bg-gold text-sm font-medium text-ink disabled:opacity-40">
-          {busy ? "Checking…" : "Open the desk"}
+          {busy ? "Opening…" : "Open the desk"}
         </button>
       </form>
-      <button type="button" onClick={() => void cutKey()} disabled={busy} className="mt-3 h-11 text-sm text-mute">
-        Cut the house key
-      </button>
-      <Link to="/login" className="mt-2 block text-xs tracking-widest text-faint uppercase">
+      <Link to="/login" className="mt-4 block text-xs tracking-widest text-faint uppercase">
         Guest door
       </Link>
     </section>
