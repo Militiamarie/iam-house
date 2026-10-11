@@ -1,4 +1,25 @@
-import type { ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
+import { createPortal } from "react-dom";
+
+export function Stage({ children }: { children: ReactNode }) {
+  const [ready, setReady] = useState(false);
+  useEffect(() => setReady(true), []);
+  if (!ready || typeof document === "undefined") return null;
+  return createPortal(children, document.body);
+}
+
+export function Look({ src, alt, onClose }: { src: string; alt: string; onClose: () => void }) {
+  return (
+    <Stage>
+      <div className="fixed inset-0 z-[80] bg-ink" role="dialog" aria-label={alt}>
+        <img src={src} alt={alt} className="size-full object-contain" />
+        <button type="button" onClick={onClose} className="absolute top-4 right-4 z-10 h-11 rounded-full border border-line bg-ink/80 px-4 text-sm">
+          Close
+        </button>
+      </div>
+    </Stage>
+  );
+}
 
 export function Kicker({ children }: { children: ReactNode }) {
   return <p className="text-xs font-medium tracking-widest text-violet uppercase">{children}</p>;

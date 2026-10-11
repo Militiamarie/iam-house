@@ -7,6 +7,7 @@ import { dollars, OFFERS, threadOpen, TIP_IDS } from "@/lib/offers";
 import { useCurrentUserState } from "@/lib/auth/use-current-user";
 import { useHouse } from "@/lib/store";
 import { PayButton } from "@/components/house/pay";
+import { Stage } from "@/components/house/bits";
 
 const SOURCES: { id: string; kind: "image" | "video"; src: string; poster?: string; label: string }[] = [
   { id: "tape", kind: "video", src: "/media/booth-tape.mp4", poster: "/media/tape-poster.jpg", label: "House tape" },
@@ -95,8 +96,16 @@ export function StoryRow() {
           );
         })}
       </div>
-      {open && <StoryViewer thread={open} paid={paid} onClose={() => setOpenId(null)} />}
-      {composing && <Composer onClose={() => setComposing(false)} onPosted={() => setOpenId("you")} />}
+      {open && (
+        <Stage>
+          <StoryViewer thread={open} paid={paid} onClose={() => setOpenId(null)} />
+        </Stage>
+      )}
+      {composing && (
+        <Stage>
+          <Composer onClose={() => setComposing(false)} onPosted={() => setOpenId("you")} />
+        </Stage>
+      )}
     </div>
   );
 }
@@ -144,7 +153,7 @@ function StoryViewer({ thread, paid, onClose }: { thread: StoryThread; paid: str
   }, [index, thread.id, locked]);
 
   return (
-    <div className="fixed inset-0 z-50 bg-ink" role="dialog" aria-label={`${thread.name} story`}>
+    <div className="fixed inset-0 z-[80] bg-ink" role="dialog" aria-label={`${thread.name} story`}>
       <div className="relative mx-auto h-dvh max-w-md">
         <Grade id={frame.filter} className="absolute inset-0">
           {frame.kind === "video" ? (
@@ -278,7 +287,7 @@ function Composer({ onClose, onPosted }: { onClose: () => void; onPosted: () => 
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center bg-ink/80 sm:items-center">
+    <div className="fixed inset-0 z-[80] flex items-end justify-center bg-ink/80 sm:items-center">
       <button type="button" className="absolute inset-0" aria-label="Close grader" onClick={onClose} />
       <form onSubmit={(e) => void post(e)} className="relative z-10 max-h-[92dvh] w-full max-w-md overflow-y-auto rounded-t-2xl border border-line bg-panel p-4 sm:rounded-2xl">
         <div className="flex items-center justify-between">

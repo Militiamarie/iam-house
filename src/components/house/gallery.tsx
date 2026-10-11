@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { EDITIONS } from "@/lib/catalog";
 import { useHouse } from "@/lib/store";
-import { Ghost, Kicker } from "@/components/house/bits";
+import { Ghost, Kicker, Look } from "@/components/house/bits";
 import { PayButton } from "@/components/house/pay";
 import { dollars, OFFERS } from "@/lib/offers";
 
@@ -9,6 +9,7 @@ export function Gallery() {
   const owned = useHouse((s) => s.owned);
   const spend = useHouse((s) => s.spend);
   const [note, setNote] = useState<string | null>(null);
+  const [look, setLook] = useState<{ src: string; alt: string } | null>(null);
 
   return (
     <div className="mx-auto flex w-full max-w-5xl flex-col gap-4">
@@ -25,7 +26,11 @@ export function Gallery() {
           const has = owned.includes(item.id);
           return (
             <article key={item.id} className="overflow-hidden rounded-2xl border border-line bg-panel">
-              {item.image && <img src={item.image} alt={item.name} className="aspect-[4/5] w-full object-cover" />}
+              {item.image && (
+                <button type="button" onClick={() => setLook({ src: item.image!, alt: item.name })} className="block w-full" aria-label={`View ${item.name}`}>
+                  <img src={item.image} alt={item.name} className="aspect-[4/5] w-full object-cover" />
+                </button>
+              )}
               {item.video && (
                 <video src={item.video} poster={item.poster} controls playsInline className="aspect-[4/5] w-full bg-ink object-cover" />
               )}
@@ -55,6 +60,7 @@ export function Gallery() {
           );
         })}
       </div>
+      {look && <Look src={look.src} alt={look.alt} onClose={() => setLook(null)} />}
     </div>
   );
 }

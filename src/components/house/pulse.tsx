@@ -3,7 +3,7 @@ import { AudioLines, Heart, MessageCircle, Send } from "lucide-react";
 import { FACES, type Post } from "@/lib/catalog";
 import { getEngine } from "@/lib/engine";
 import { publishLive, useHouse, type RoomId } from "@/lib/store";
-import { Card } from "@/components/house/bits";
+import { Card, Look, Stage } from "@/components/house/bits";
 import { StoryRow } from "@/components/house/stories";
 
 type Lane = "wall" | "room" | "pockets";
@@ -181,7 +181,8 @@ export function Pulse() {
       ))}
 
       {who && profile && (
-        <div className="fixed inset-0 z-50">
+        <Stage>
+        <div className="fixed inset-0 z-[80]">
           <button type="button" className="absolute inset-0 bg-ink/70" aria-label="Close profile" onClick={() => setWho(null)} />
           <div className="house-sheet absolute inset-x-0 bottom-0 rounded-t-2xl border border-line bg-panel p-5 md:inset-x-auto md:top-1/2 md:bottom-auto md:left-1/2 md:w-[28rem] md:-translate-x-1/2 md:-translate-y-1/2 md:rounded-2xl">
             <div className="flex items-center gap-3">
@@ -221,10 +222,12 @@ export function Pulse() {
             </ul>
           </div>
         </div>
+        </Stage>
       )}
 
       {clip && (
-        <div className="fixed inset-0 z-50 bg-ink">
+        <Stage>
+        <div className="fixed inset-0 z-[80] bg-ink">
           <button type="button" onClick={() => setClip(false)} className="absolute top-4 right-4 z-10 h-11 rounded-full border border-line bg-ink/80 px-4 text-sm">
             Close
           </button>
@@ -258,6 +261,7 @@ export function Pulse() {
             ))}
           </div>
         </div>
+        </Stage>
       )}
     </div>
   );
@@ -313,6 +317,7 @@ function PostCard({
   onNote: (value: string) => void;
   onSend: () => void;
 }) {
+  const [photo, setPhoto] = useState(false);
   return (
     <Card className="overflow-hidden p-0">
       <div className="flex items-center gap-3 px-4 py-3">
@@ -334,7 +339,12 @@ function PostCard({
           </button>
         )}
       </div>
-      {post.image && <img src={post.image} alt="" className="max-h-[32rem] w-full object-cover" />}
+      {post.image && (
+        <button type="button" onClick={() => setPhoto(true)} className="block w-full" aria-label="View photo">
+          <img src={post.image} alt="" className="max-h-[32rem] w-full object-cover" />
+        </button>
+      )}
+      {photo && post.image && <Look src={post.image} alt={post.author} onClose={() => setPhoto(false)} />}
       {post.video && (
         <video src={post.video} poster={post.poster} controls playsInline className="max-h-[32rem] w-full bg-ink object-cover" />
       )}
