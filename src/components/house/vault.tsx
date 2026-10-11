@@ -3,7 +3,8 @@ import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "rec
 import { BEATS, EDITIONS } from "@/lib/catalog";
 import { useHouse } from "@/lib/store";
 import { Card, Kicker, Primary } from "@/components/house/bits";
-import { HouseBooks } from "@/components/house/pay";
+import { dollars, TIER_IDS, OFFERS } from "@/lib/offers";
+import { HouseBooks, PayButton } from "@/components/house/pay";
 
 export function Vault() {
   const credits = useHouse((s) => s.credits);
@@ -37,6 +38,36 @@ export function Vault() {
       </header>
 
       <HouseBooks />
+
+      <Card>
+        <h2 className="font-display text-2xl italic">Subscriptions</h2>
+        <p className="mt-2 text-sm leading-relaxed text-mute">
+          Free keeps the basic board. Student, Creator, and House pay you every month. Higher tiers open the school tools, the wire, and the locked tapes.
+        </p>
+        <div className="mt-4 grid gap-3 sm:grid-cols-3">
+          <section className="rounded-xl border border-line p-3">
+            <h3 className="text-sm">Free</h3>
+            <p className="mt-1 font-display text-3xl text-mute">$0</p>
+            <p className="mt-2 text-xs leading-relaxed text-faint">Basic studio. A few grades. Standard reach.</p>
+          </section>
+          {TIER_IDS.map((id) => {
+            const offer = OFFERS[id]!;
+            return (
+              <section key={id} className="rounded-xl border border-line p-3">
+                <h3 className="text-sm">{offer.label}</h3>
+                <p className="mt-1 font-display text-3xl text-violet">
+                  {dollars(offer.cents)}
+                  <span className="text-sm text-mute">/mo</span>
+                </p>
+                <p className="mt-2 text-xs leading-relaxed text-faint">{offer.line}</p>
+                <div className="mt-3">
+                  <PayButton sku={id} />
+                </div>
+              </section>
+            );
+          })}
+        </div>
+      </Card>
 
       <Card>
         <p className="text-xs tracking-widest text-faint uppercase">IAM credits</p>

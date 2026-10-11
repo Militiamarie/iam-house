@@ -28,6 +28,24 @@ export const OFFERS: Record<string, Offer> = {
     label: "Patron",
     line: "Every locked tape. First listen. Patron on your name.",
   },
+  "pass-student": {
+    kind: "pass",
+    cents: 900,
+    label: "Student",
+    line: "Full school, extra presets, a faster wire.",
+  },
+  "pass-creator": {
+    kind: "pass",
+    cents: 2900,
+    label: "Creator",
+    line: "Mastering, unlimited generations, priority on the wire.",
+  },
+  "pass-house": {
+    kind: "pass",
+    cents: 7900,
+    label: "House",
+    line: "Everything open. Chart push. The fastest wire.",
+  },
   "tip-3": { kind: "tip", cents: 300, label: "Tip", line: "A small light on the tape." },
   "tip-8": { kind: "tip", cents: 800, label: "Tip", line: "Enough to keep the booth warm." },
   "tip-18": { kind: "tip", cents: 1800, label: "Tip", line: "A real thank you." },
@@ -96,6 +114,7 @@ export const OFFERS: Record<string, Offer> = {
 };
 
 export const PASS_IDS = ["pass-key", "pass-inner", "pass-patron"] as const;
+export const TIER_IDS = ["pass-student", "pass-creator", "pass-house"] as const;
 export const TIP_IDS = ["tip-3", "tip-8", "tip-18"] as const;
 
 export type BookLine = {
@@ -117,7 +136,13 @@ export function dollars(cents: number) {
 
 export function threadOpen(paid: string[], sku?: string) {
   if (!sku) return true;
-  return paid.includes(sku) || paid.includes("pass-inner") || paid.includes("pass-patron");
+  return (
+    paid.includes(sku) ||
+    paid.includes("pass-inner") ||
+    paid.includes("pass-patron") ||
+    paid.includes("pass-creator") ||
+    paid.includes("pass-house")
+  );
 }
 
 export function offerFor(id: string): Offer | null {

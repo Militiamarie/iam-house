@@ -9,6 +9,7 @@ const LOOKS: { id: SkinId; name: string; line: string; ink: string; accent: stri
   { id: "alley", name: "Alley", line: "Night blue, a cold light.", ink: "#070b10", accent: "#7ee0ff" },
   { id: "ink", name: "Ink", line: "Black and lime, like the wall.", ink: "#070807", accent: "#c6f54a" },
   { id: "chapel", name: "Chapel", line: "Wine and a soft gold.", ink: "#10080c", accent: "#f0a0c0" },
+  { id: "neon", name: "Neon", line: "Lime and cyan. The board from the sketch.", ink: "#0a0a0a", accent: "#c8ff00" },
 ];
 
 export function wearSkin(skin: SkinId) {

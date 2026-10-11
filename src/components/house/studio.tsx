@@ -3,6 +3,7 @@ import { useState } from "react";
 import { CHAINS, DRUMS, KEYS, PRESET_LIST, STEPS, VOICES, VOICE_LABEL, degreeName, type DrumKey, type Voice } from "@/lib/patterns";
 import { useHouse } from "@/lib/store";
 import { Card, Kicker } from "@/components/house/bits";
+import { Daw } from "@/components/house/daw";
 
 export function Studio() {
   const patternId = useHouse((s) => s.patternId);
@@ -49,6 +50,8 @@ export function Studio() {
         </button>
         {sessionWith && <p className="mt-2 text-sm text-gold">Session open with {sessionWith}.</p>}
       </header>
+
+      <Daw />
 
       <div className="flex flex-wrap gap-2">
         {PRESET_LIST.map((item) => (

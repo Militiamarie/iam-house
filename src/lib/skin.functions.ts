@@ -1,7 +1,7 @@
 import { createMiddleware, createServerFn } from "@tanstack/react-start";
 import { getSql } from "@/lib/db";
 
-export const SKINS = ["house", "candle", "alley", "ink", "chapel"] as const;
+export const SKINS = ["house", "candle", "alley", "ink", "chapel", "neon"] as const;
 export type SkinId = (typeof SKINS)[number];
 
 export function isSkin(value: string): value is SkinId {
